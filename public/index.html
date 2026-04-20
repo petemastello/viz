@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dive Visibility — Sentinel-3 OLCI</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="map"></div>
+
+  <!-- Search box -->
+  <div id="search-box">
+    <div id="search-header">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+      </svg>
+      <input
+        type="text"
+        id="search-input"
+        placeholder="Search location…"
+        autocomplete="off"
+      />
+    </div>
+    <div id="search-suggestions"></div>
+  </div>
+
+  <!-- Legend -->
+  <div id="legend">
+    <div class="legend-title">Kd490 Water Clarity</div>
+    <div class="legend-scale">
+      <div class="legend-bar"></div>
+      <div class="legend-labels">
+        <span>0.03</span>
+        <span>0.17</span>
+        <span>0.5+</span>
+      </div>
+    </div>
+    <div class="legend-labels-text">
+      <span>Clear</span>
+      <span style="margin-left:auto">Turbid</span>
+    </div>
+  </div>
+
+  <!-- Result card -->
+  <div id="result-card" class="hidden">
+    <button id="result-close" aria-label="Close">×</button>
+    <div id="result-content">
+      <div class="result-label">Estimated Visibility</div>
+      <div id="result-depth" class="result-depth">—</div>
+      <div id="result-quality" class="result-quality">—</div>
+      <div id="result-bar-wrap">
+        <div id="result-bar"></div>
+        <div id="result-marker"></div>
+      </div>
+      <div id="result-meta" class="result-meta">—</div>
+      <div class="result-warning">
+        ⚠ Estimate only. Always check local dive reports.
+      </div>
+    </div>
+    <div id="result-loading" class="hidden">
+      <div class="spinner"></div>
+      <span>Fetching satellite data…</span>
+    </div>
+    <div id="result-error" class="hidden">
+      <span id="result-error-msg"></span>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
