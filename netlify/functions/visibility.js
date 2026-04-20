@@ -42,7 +42,7 @@ exports.handler = async function (event) {
   };
 
   // Parse and validate query params
-  const { lat, lon } = event.queryStringParameters || {};
+  const { lat, lon, date } = event.queryStringParameters || {};
   const latF = parseFloat(lat);
   const lonF = parseFloat(lon);
 
@@ -61,12 +61,22 @@ exports.handler = async function (event) {
     };
   }
 
-  // ── Build date range: try today, fall back to yesterday ──────────────────
+  // ── Build date list to try ────────────────────────────────────────────────
+  // If the client specifies a date, try it then fall back one day (cloud gaps).
+  // Otherwise default to today → yesterday.
   const today     = new Date();
   const yesterday = new Date(today); yesterday.setDate(today.getDate() - 1);
 
-  // Try today first, then yesterday (satellite composites have ~1-day latency)
-  for (const targetDate of [today, yesterday]) {
+  let datesToTry;
+  if (date && /^\d{4}-\d{2}-\d{2}$/.test(date)) {
+    const requested = new Date(date + 'T12:00:00Z');
+    const dayBefore = new Date(requested); dayBefore.setDate(requested.getDate() - 1);
+    datesToTry = [requested, dayBefore];
+  } else {
+    datesToTry = [today, yesterday];
+  }
+
+  for (const targetDate of datesToTry) {
     const dateStr = isoDate(targetDate);
     const result  = await fetchKd490(username, password, latF, lonF, dateStr);
 

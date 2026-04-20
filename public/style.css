@@ -246,6 +246,115 @@ body {
   display: none !important;
 }
 
+/* ── Timeline bar ── */
+#timeline {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 64px;
+  background: rgba(10, 22, 40, 0.92);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  gap: 14px;
+}
+
+#play-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: none;
+  background: #0868ac;
+  color: #fff;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background .15s, transform .1s;
+}
+
+#play-btn:hover  { background: #2b8cbe; }
+#play-btn:active { transform: scale(.93); }
+
+#timeline-track {
+  position: relative;
+  flex: 1;
+  height: 36px;
+}
+
+#timeline-days {
+  display: flex;
+  align-items: stretch;
+  height: 100%;
+  gap: 3px;
+}
+
+.day-tick {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 4px;
+  cursor: pointer;
+  border-radius: 4px;
+  border: 1px solid transparent;
+  transition: background .15s, border-color .15s;
+  position: relative;
+}
+
+.day-tick:hover {
+  background: rgba(255,255,255,.07);
+}
+
+.day-tick.active {
+  background: rgba(8, 104, 172, .25);
+  border-color: #0868ac;
+}
+
+.day-tick::before {
+  content: '';
+  display: block;
+  width: 2px;
+  height: 8px;
+  border-radius: 1px;
+  background: rgba(255,255,255,.25);
+  margin-bottom: 4px;
+  transition: background .15s, height .15s;
+}
+
+.day-tick.active::before {
+  background: #4eb3d3;
+  height: 12px;
+}
+
+.day-label {
+  font-size: 10px;
+  color: rgba(255,255,255,.45);
+  letter-spacing: .03em;
+  white-space: nowrap;
+  transition: color .15s;
+}
+
+.day-tick.active .day-label {
+  color: #7bccc4;
+  font-weight: 600;
+}
+
+/* Slide the result card up above the timeline */
+#result-card {
+  bottom: 80px;
+}
+
+#result-card.hidden {
+  transform: translateX(-50%) translateY(12px);
+}
+
 /* ── Click pulse animation ── */
 @keyframes pulse-ring {
   0%   { transform: scale(.6); opacity: 1; }
@@ -263,7 +372,9 @@ body {
 /* ── Responsive ── */
 @media (max-width: 480px) {
   #search-box { left: 10px; right: 10px; width: auto; }
-  #result-card { left: 10px; right: 10px; transform: none; bottom: 16px; max-width: none; }
+  #result-card { left: 10px; right: 10px; transform: none; bottom: 76px; max-width: none; }
   #result-card.hidden { transform: translateY(12px); }
   #legend { display: none; }
+  .day-label { display: none; }
+  .day-tick { min-width: 0; }
 }
