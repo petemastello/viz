@@ -28,25 +28,41 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
   maxZoom: 18,
 }).addTo(map);
 
-// ── WMTS overlay (date-aware) ──────────────────────────────────────────────
+// ── CMEMS Kd490 overlay ────────────────────────────────────────────────────
+// Uses the public CMEMS WMTS service (no auth needed for tiles).
+// Layer format: PRODUCT/DATASET/VARIABLE
+// Style: jet colormap, Kd490 range 0.03–0.5 on log scale
 function buildWmtsUrl(dateStr) {
+  const base   = 'https://wmts.marine.copernicus.eu/teroWmts/';
+  const layer  = 'OCEANCOLOUR_GLO_BGC_L3_NRT_009_101/cmems_obs-oc_glo_bgc-transp_nrt_l3-olci-300m_P1D/KD490';
+  const style  = 'cmap:jet,range:0.03/0.5,logScale';
+
   return (
-    'https://wmts.marine.copernicus.eu/teroWmts/?service=WMTS&version=1.0.0' +
-    '&request=GetTile' +
-    '&layer=OCEANCOLOUR_GLO_BGC_L3_NRT_009_101%2F' +
-    'cmems_obs-oc_glo_bgc-transp_nrt_l3-olci-300m_P1D%2FKD490' +
-    '&tilematrixset=EPSG%3A3857' +
-    '&tilematrix={z}&tilerow={y}&tilecol={x}' +
-    '&style=cmap%3Adeep%2Crange%3A0.03%2F0.5%2ClogScale' +
+    base +
+    `?service=WMTS&version=1.0.0&request=GetTile` +
+    `&layer=${encodeURIComponent(layer)}` +
+    `&tilematrixset=EPSG%3A3857` +
+    `&tilematrix={z}&tilerow={y}&tilecol={x}` +
+    `&style=${encodeURIComponent(style)}` +
     `&time=${dateStr}`
   );
 }
 
+let overlayVisible = true;
 let wmtsLayer = L.tileLayer(buildWmtsUrl(isoDate(new Date())), {
   attribution: '© <a href="https://marine.copernicus.eu">CMEMS</a> · Sentinel-3 OLCI',
-  opacity: 0.75,
+  opacity: 0.85,
   maxZoom: 18,
+  crossOrigin: true,
 }).addTo(map);
+
+// ── Overlay toggle ─────────────────────────────────────────────────────────
+const overlayToggleBtn = document.getElementById('overlay-toggle');
+overlayToggleBtn.addEventListener('click', () => {
+  overlayVisible = !overlayVisible;
+  overlayToggleBtn.classList.toggle('active', overlayVisible);
+  wmtsLayer.setOpacity(overlayVisible ? 0.85 : 0);
+});
 
 // ── Timeline state ─────────────────────────────────────────────────────────
 const DAYS         = getLast10Days();
@@ -86,8 +102,8 @@ function selectDay(idx) {
   selectedIdx = idx;
   const dateStr = DAYS[idx];
 
-  // Swap WMTS layer to new date
-  wmtsLayer.setUrl(buildWmtsUrl(dateStr));
+  // Swap WMTS layer to new date and force reload
+  wmtsLayer.setUrl(buildWmtsUrl(dateStr), false);
 
   // Re-query the pinned location if the result card is open
   if (!card.classList.contains('hidden') && pinnedLatLng) {
