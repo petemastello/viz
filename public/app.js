@@ -34,8 +34,8 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 // Style: jet colormap, Kd490 range 0.03–0.5 on log scale
 function buildWmtsUrl(dateStr) {
   const base   = 'https://wmts.marine.copernicus.eu/teroWmts/';
-  const layer  = 'OCEANCOLOUR_GLO_BGC_L3_NRT_009_101/cmems_obs-oc_glo_bgc-transp_nrt_l3-olci-300m_P1D/KD490';
-  const style  = 'cmap:jet,range:0.03/0.5,logScale';
+  const layer  = 'OCEANCOLOUR_GLO_BGC_L3_NRT_009_101/cmems_obs-oc_glo_bgc-transp_nrt_l3-olci-4km_P1D_202207/KD490';
+  const style  = 'cmap:dense,logScale';
 
   return (
     base +
@@ -44,7 +44,7 @@ function buildWmtsUrl(dateStr) {
     `&tilematrixset=EPSG%3A3857` +
     `&tilematrix={z}&tilerow={y}&tilecol={x}` +
     `&style=${encodeURIComponent(style)}` +
-    `&time=${dateStr}`
+    `&time=${dateStr}T00:00:00.000Z`
   );
 }
 
